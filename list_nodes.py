@@ -60,3 +60,37 @@ class Trie:
                 return False
             node = node.children[char]
         return True
+
+#  链表实现两数相加
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+# 涉及到进位，链表的终止；
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        dummy = ListNode(0)
+        current = dummy
+        carry = 0
+        # 相当于把位数补齐，然后进行一致性操作，还要注意最后一位的加减
+        while l1 or l2 or carry:
+            val1 = l1.val if l1 else 0
+            val2 = l2.val if l2 else 0
+
+            total = val1 + val2 + carry
+            carry = total // 10
+            current.next = ListNode(total % 10)
+            current = current.next
+
+            if l1:
+                l1 = l1.next
+            if l2:
+                l2 = l2.next
+
+        return dummy.next
+    
+
+# 数组中的出现一次的数字
+# 其他数字出现两次
+# 位操作异或，或者采用集合、哈希实现，但是需要额外空间
