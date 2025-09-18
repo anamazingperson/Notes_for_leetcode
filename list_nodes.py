@@ -1,4 +1,5 @@
 # 相交列表，
+import  random
 
 # 列表：单向，局部的连接
 # 相遇节点判断，采用相等，哈希或者采用分析出终止条件。
@@ -180,7 +181,49 @@ def test_vote():
 
 # 链表的基本操作
 # 排序
+def rank(head:ListNode):
+    if not head or not head.next:
+        return head
 
+    start = head
+    slow = head
+    fast = head
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+    mid = slow.next
+    # 切割前后半段
+    slow.next = None
+
+    rankA = rank(start)
+    rankB = rank(mid)
+    return merge(rankA,rankB)
+
+
+def merge(l1:ListNode,l2:ListNode):
+    dummy = ListNode(0)
+    head = dummy
+
+    while l1 and l2:
+        if l1.val < l2.val:
+            head.next = l1
+            l1 = l1.next
+        else:
+            head.next = l2
+            l2 = l2.next
+        head = head.next
+     
+    head.next = l1 if l1 else l2
+
+    return dummy.next
+
+
+def test_rank():
+    nums = range(10)[::-1]
+    head = create_list(nums)
+    print(expand_list(rank(head)))
+
+# test_rank()
 
 
 
@@ -188,9 +231,110 @@ def test_vote():
 # 改进方法，可以改进判断的条件，是否取等号，来实现不同的边界条件
 # 螺旋数组排序，拆分的两段会有一段是连续的，然后对连续的采用二分法，需要添加判断连续的条件。
 
+def base_2(nums,target): 
+    n = len(nums)
+    left ,right = 0, n-1
+    while left < right:
+        mid = (left+right)//2
+
+        if nums[mid] < target:
+            left = mid +1
+        elif nums[mid] > target:
+            right = mid -1
+        else:
+            return mid
+    
+
+def rotate_2(nums,target):
+    left,right = 0,len(nums)-1
+    while left <= right:
+        mid = (right+left)//2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] > nums[left]:
+            if nums[left] <= target < nums[mid]:
+                right = mid -1
+            else:
+                left = mid +1
+        else:
+            if nums[mid] < target <= nums[right]:
+                left = mid +1
+            else:
+                right = mid -1
+    
+
+                
+            
+
+
+def base_2(nums,target): 
+    n = len(nums)
+    left ,right = 0, n-1
+    while left <= right:
+        mid = (left+right)//2
+
+        if nums[mid] < target:
+            left = mid +1
+        elif nums[mid] > target:
+            right = mid -1
+        else:
+            return mid
+
+
+
+def test_rotate():
+    nums1 = [i for i in range(2,10)]
+    nums2 = [0,1]
+    nums = nums1 + nums2
+    a =0
+    print(nums[rotate_2(nums,a)])
+    # print(rotate_2(nums,a))
+
+
+
 # 买股票的最佳时机，理解题目，以每个数字为卖出点，把买入不确定性转化为前序数组的最小值，进而变为确定性事件
 
+def buy_tik(nums:list):
+    ans = float('-inf')
+    in_min = nums[0]
+    for i in range(1,len(nums)):
+        in_min = min(in_min,nums[i-1])
+        ans = max(ans,nums[i]-in_min)
+    return ans
+
+
+
+def test_buy():
+    nums = [random.randint(3,10) for _ in range(10)]
+    print(nums)
+    print(buy_tik(nums))
 
 # 任务调度，休息工作，根据规律得到公式，【AAA,BBB]
 
+
+
+
+
 # 下一个排列，[1,2,3,].[1,3,2]，主要是下一个的通用逻辑是，先找到右左第一个小的，然后右左比这个数大的，交换之后，翻转，【i+1,..]
+def get_next(nums):
+    n = len(nums)
+    for i in range(n):
+        if n-i-2 >=0 and nums[n-i -1] > nums[n-i-1-1]:
+            i_min = n-i-1-1
+            break
+        
+    for i in range(n):
+        if nums[n-i-1] > nums[i_min]:
+            i_max = n-i-1
+            break
+    print(i_max,i_min)
+    temp = nums[i_min]
+    nums[i_min] = nums[i_max]
+    nums[i_max] = temp
+
+    return nums[:i_min+1] + sorted(nums[i_min+1:],reverse= True)
+
+def test_next():
+    nums = [i for i in range(10)]
+    nums = [2,3,1]
+    print(get_next(nums))
